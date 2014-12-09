@@ -16,10 +16,10 @@ Spiderable.userAgentRegExps = [
     /^facebookexternalhit/i, /^linkedinbot/i, /^twitterbot/i];
 
 // how long to let phantomjs run before we kill it
-var REQUEST_TIMEOUT = 15*1000;
+var REQUEST_TIMEOUT = 60*1000;
 // maximum size of result HTML. node's default is 200k which is too
 // small for our docs.
-var MAX_BUFFER = 5*1024*1024; // 5MB
+var MAX_BUFFER = 50*1024*1024; // 50MB
 
 // Exported for tests.
 Spiderable._urlForPhantom = function (siteAbsoluteUrl, requestUrl) {
@@ -59,7 +59,18 @@ WebApp.connectHandlers.use(function (req, res, next) {
       _.any(Spiderable.userAgentRegExps, function (re) {
         return re.test(req.headers['user-agent']); })) {
 
-    var url = Spiderable._urlForPhantom(Meteor.absoluteUrl(), req.url);
+    // Meteor.absoluteUrl can sometimes route differently than the URL the
+    // user wanted to go to. Where one Meteor server serves, say, the websites
+    // for various restaurants, and the root URL describes the service rather
+    // than the restaurant the user is interested in, the page displayed by
+    // spiderable will be for the wrong thing without this change.
+    currentAbsoluteUrl = (req["x-forwarded-proto"] || "http") + '://' + req.headers.host;
+
+    urlOptions = {
+      'rootUrl': currentAbsoluteUrl
+      };
+
+    var url = Spiderable._urlForPhantom(Meteor.absoluteUrl(urlOptions), req.url);
 
     // This string is going to be put into a bash script, so it's important
     // that 'url' (which comes from the network) can neither exploit phantomjs

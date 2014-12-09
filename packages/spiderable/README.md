@@ -28,3 +28,10 @@ to be ready. Make sure that all of your [`publish functions`](#meteor_publish)
 either return a cursor (or an array of cursors), or eventually call
 [`this.ready()`](#publish_ready). Otherwise, the `phantomjs` executions
 will fail.
+
+(This fork of `spiderable` changes URL handling so that users going to 
+foo.com/?spiderable-nonsense are routed to foo.com rather than ROOT_URL 
+in cases where foo.com isn't the ROOT_URL. There is some suggestion in 
+Meteor documentation that ROOT_URL intentionally has this downside, but
+it prevented a product I was working on from being spiderable, so I've
+made this change.)
