@@ -34,4 +34,6 @@ foo.com/?spiderable-nonsense are routed to foo.com rather than ROOT_URL
 in cases where foo.com isn't the ROOT_URL. There is some suggestion in 
 Meteor documentation that ROOT_URL intentionally has this downside, but
 it prevented a product I was working on from being spiderable, so I've
-made this change.)
+made this change. I also changed the phantom_script.js file, adapting it 
+from [http://www.meteorpedia.com/read/spiderable](the Meteorpedia example)
+because the original one didn't work for me.)
